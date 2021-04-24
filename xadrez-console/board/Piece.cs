@@ -7,12 +7,12 @@
         public int qtMovements {get; set;}
         public Board board { get; set; }
 
-        public Piece(Position position, Color color,  Board board)
+        public Piece(Board board, Color color)
         {
-            this.position = position;
-            this.color = color;
-            this.qtMovements = 0;
             this.board = board;
+            this.color = color;
+            this.position = null;
+            this.qtMovements = 0;
         }
     }
 }

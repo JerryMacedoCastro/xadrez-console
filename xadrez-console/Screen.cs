@@ -13,20 +13,36 @@ namespace xadrez_console
                 Console.Write(8 - i + " ");
                 for (int j = 0; j < b.qtColumns; j++)
                 {
-                    if (b.getPiece(i, j) == null)
-                    {
-                        Console.Write("- ");
-                    }
-                    else
-                    {
-                        Screen.showPiece(b.getPiece(i, j));
-                        Console.Write(" ");
-                    }
-
+                    showPiece(b.getPiece(i, j));
                 }
                 Console.WriteLine();
             }
             Console.WriteLine("  a b c d e f g h");
+        }
+
+        public static void showBoard(Board b, bool[,] m)
+        {
+            ConsoleColor originalColor = Console.BackgroundColor;
+            ConsoleColor newColor = ConsoleColor.DarkGray;
+            for (int i = 0; i < b.qtLines; i++)
+            {
+                Console.Write(8 - i + " ");
+                for (int j = 0; j < b.qtColumns; j++)
+                {
+                    if (m[i, j] == true)
+                    {
+                        Console.BackgroundColor = newColor;
+                    } else
+                    {
+                        Console.BackgroundColor = originalColor;
+                    }
+                    showPiece(b.getPiece(i, j));
+                    Console.BackgroundColor = originalColor;
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("  a b c d e f g h");
+            Console.BackgroundColor = originalColor;
         }
 
         public static ChessPosition readPosition()
@@ -39,16 +55,25 @@ namespace xadrez_console
 
         public static void showPiece(Piece p)
         {
-            if (p.color == Color.white)
+            if (p == null)
             {
-                Console.Write(p);
+                Console.Write("- ");
             }
             else
             {
-                ConsoleColor auxColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write(p);
-                Console.ForegroundColor = auxColor;
+
+                if (p.color == Color.white)
+                {
+                    Console.Write(p);
+                }
+                else
+                {
+                    ConsoleColor auxColor = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(p);
+                    Console.ForegroundColor = auxColor;
+                }
+                Console.Write(" ");
             }
         }
     }

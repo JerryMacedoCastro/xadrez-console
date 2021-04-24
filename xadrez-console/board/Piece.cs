@@ -14,5 +14,10 @@
             this.position = null;
             this.qtMovements = 0;
         }
+
+        public void increaseMovement()
+        {
+            qtMovements++;
+        }
     }
 }

@@ -7,9 +7,9 @@ namespace xadrez_console
     {
         static void Main(string[] args)
         {
-            Position p = new Position(2, 4);
+            Board b = new Board(4,5);
 
-            Console.WriteLine(p.ToString());
+            Console.WriteLine("Hey ho ");
         }
     }
 }

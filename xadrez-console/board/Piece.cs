@@ -25,6 +25,7 @@
             qtMovements--;
         }
 
+       
         public bool hasPossibleMovements()
         {
             bool[,] m = possibleMovements();
@@ -39,7 +40,7 @@
             return false;
         }
 
-        public bool canMoveTo(Position pos)
+        public bool possibleMovement(Position pos)
         {
             return possibleMovements()[pos.line, pos.column];
         }

@@ -1,20 +1,23 @@
-﻿using System;
-using board;
+﻿using board;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace chess
 {
-    class King : Piece
+    class Knight : Piece
     {
-
-
-        public King(Board b, Color color) : base(b, color)
+        public Knight(Board board, Color color) : base(board, color)
         {
-
         }
+
         public override string ToString()
         {
-            return "R";
+            return "C";
         }
+
         public bool canMove(Position pos)
         {
             Piece p = board.getPiece(pos);
@@ -24,67 +27,68 @@ namespace chess
         public override bool[,] possibleMovements()
         {
             bool[,] m = new bool[board.qtLines, board.qtColumns];
-
             Position pos = new Position(0, 0);
 
-            //cima
-            pos.defineValues(position.line - 1, position.column);
+            //acima
+            pos.defineValues(position.line - 1, position.column - 2);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-            //superior direito
-            pos.defineValues(position.line - 1, position.column + 1);
+           
+            pos.defineValues(position.line - 2, position.column - 1);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-            //direito
-            pos.defineValues(position.line, position.column + 1);
+          
+            pos.defineValues(position.line - 2, position.column + 1);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-            //inferior direito
-            pos.defineValues(position.line + 1, position.column + 1);
+           
+            pos.defineValues(position.line - 1, position.column + 2);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-            //baixo
-            pos.defineValues(position.line + 1, position.column);
+
+            //movimentos para baixo
+
+            
+            pos.defineValues(position.line + 1, position.column + 2);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-            //inferior esquerdo
-            pos.defineValues(position.line + 1, position.column - 1);
+           
+            pos.defineValues(position.line + 2, position.column + 1);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-            //esquerdo
-            pos.defineValues(position.line, position.column - 1);
+          
+            pos.defineValues(position.line + 2, position.column - 1);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-            //superior esquerdo
-            pos.defineValues(position.line - 1, position.column - 1);
+            pos.defineValues(position.line + 1, position.column - 2 );
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
+
+
             return m;
-
-
         }
 
 

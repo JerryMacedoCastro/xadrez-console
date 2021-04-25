@@ -93,7 +93,7 @@ namespace chess
 
         public void validateDestinyPosition(Position origin, Position destiny)
         {
-            if (!board.getPiece(origin).canMoveTo(destiny))
+            if (!board.getPiece(origin).possibleMovement(destiny))
                 throw new BoardException("Invalid destiny");
         }
 
@@ -139,7 +139,7 @@ namespace chess
             }
         }
 
-        private Piece getKing(Color c)
+        public Piece getKing(Color c)
         {
             foreach (Piece p in getLivePieces(c))
             {
@@ -156,21 +156,23 @@ namespace chess
         public bool isInCheck(Color c)
         {
             Piece k = getKing(c);
-            /*if (k == null)
+
+            if (k == null)
             {
                 throw new BoardException($"There is no king of color #{c}");
-            }*/
+            }
 
             foreach (Piece p in getLivePieces(getChessMateColor(c)))
             {
                 bool[,] m = p.possibleMovements();
-                if (m[k.position.line, k.position.column])
+                if (m[k.position.line, k.position.column] == true)
                 {
                     return true;
                 }
             }
             return false;
         }
+
 
         public bool isCheckmate(Color c)
         {
@@ -185,19 +187,25 @@ namespace chess
                 {
                     for (int j = 0; j < board.qtColumns; j++)
                     {
-                        Position origin = p.position;
-                        Piece deadPiece = doMovement(p.position, new Position(i, j));
-                        bool testCheck = isInCheck(c);
-                        undoMovement(origin, new Position(i, j), deadPiece);
-                        if (!testCheck)
+                        if (m[i, j])
                         {
-                            return false;
+                            Position origin = p.position;
+                            Position destiny = new Position(i, j);
+                            Piece deadPiece = doMovement(p.position, destiny);
+                            bool testCheck = isInCheck(c);
+                            undoMovement(origin, destiny, deadPiece);
+                            if (!testCheck)
+                            {
+                                return false;
+                            }
                         }
                     }
                 }
             }
             return true;
         }
+
+
 
         public void addNewPiece(char col, int line, Piece p)
         {
@@ -207,19 +215,47 @@ namespace chess
 
         private void setTable()
         {
-            addNewPiece('c', 1, new Rook(board, Color.white));
-            addNewPiece('c', 2, new Rook(board, Color.white));
-            addNewPiece('d', 2, new Rook(board, Color.white));
-            addNewPiece('e', 1, new Rook(board, Color.white));
-            addNewPiece('e', 2, new Rook(board, Color.white));
-            addNewPiece('d', 1, new King(board, Color.white));
+           
 
-           // addNewPiece('c', 7, new Rook(board, Color.black));
-           // addNewPiece('c', 8, new Rook(board, Color.black));
-            //addNewPiece('d', 7, new Rook(board, Color.black));
-           // addNewPiece('e', 7, new Rook(board, Color.black));
-            addNewPiece('e', 8, new Rook(board, Color.black));
-            addNewPiece('d', 8, new King(board, Color.black));
+            addNewPiece('a', 1, new Rook(board, Color.white));
+            addNewPiece('b', 1, new Knight(board, Color.white));
+            addNewPiece('c', 1, new Bishop(board, Color.white));
+            addNewPiece('d', 1, new Queen(board, Color.white));
+            addNewPiece('e', 1, new King(board, Color.white));
+            addNewPiece('f', 1, new Bishop(board, Color.white));
+            addNewPiece('g', 1, new Knight(board, Color.white));
+            addNewPiece('h', 1, new Rook(board, Color.white));
+            
+            addNewPiece('a', 2, new Pawn(board, Color.white));
+            addNewPiece('b', 2, new Pawn(board, Color.white));
+            addNewPiece('c', 2, new Pawn(board, Color.white));
+            addNewPiece('d', 2, new Pawn(board, Color.white));
+            addNewPiece('e', 2, new Pawn(board, Color.white));
+            addNewPiece('f', 2, new Pawn(board, Color.white));
+            addNewPiece('g', 2, new Pawn(board, Color.white));
+            addNewPiece('h', 2, new Pawn(board, Color.white));
+
+
+            addNewPiece('a', 7, new Pawn(board, Color.black));
+            addNewPiece('b', 7, new Pawn(board, Color.black));
+            addNewPiece('c', 7, new Pawn(board, Color.black));
+            addNewPiece('d', 7, new Pawn(board, Color.black));
+            addNewPiece('e', 7, new Pawn(board, Color.black));
+            addNewPiece('f', 7, new Pawn(board, Color.black));
+            addNewPiece('g', 7, new Pawn(board, Color.black));
+            addNewPiece('h', 7, new Pawn(board, Color.black));
+
+            addNewPiece('a', 8, new Rook(board, Color.black));
+            addNewPiece('b', 8, new Knight(board, Color.black));
+            addNewPiece('c', 8, new Bishop(board, Color.black));
+            addNewPiece('d', 8, new Queen(board, Color.black));
+            addNewPiece('e', 8, new King(board, Color.black));
+            addNewPiece('f', 8, new Bishop(board, Color.black));
+            addNewPiece('g', 8, new Knight(board, Color.black));
+            addNewPiece('h', 8, new Rook(board, Color.black));
+
+
+
         }
     }
 }

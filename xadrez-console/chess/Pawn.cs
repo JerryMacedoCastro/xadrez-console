@@ -26,14 +26,14 @@ namespace chess
 
         public override bool[,] possibleMovements()
         {
-           bool[,] m = new bool[board.qtLines, board.qtColumns];
+            bool[,] m = new bool[board.qtLines, board.qtColumns];
 
             Position pos = new Position(0, 0);
 
             if (color == Color.white)
             {
                 pos.defineValues(position.line - 1, position.column);
-                if(board.isValidPosition(pos) && isFreePosition(pos))
+                if (board.isValidPosition(pos) && isFreePosition(pos))
                 {
                     m[pos.line, pos.column] = true;
                 }
@@ -55,7 +55,8 @@ namespace chess
                 {
                     m[pos.line, pos.column] = true;
                 }
-            } else
+            }
+            else
             {
                 pos.defineValues(position.line + 1, position.column);
                 if (board.isValidPosition(pos) && isFreePosition(pos))
@@ -82,7 +83,7 @@ namespace chess
                 }
             }
 
-            
+
             return m;
         }
 

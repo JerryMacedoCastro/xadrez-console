@@ -14,11 +14,6 @@ namespace chess
             return "T";
         }
 
-        public bool canMove(Position pos)
-        {
-            Piece p = board.getPiece(pos);
-            return p == null || p.color != color;
-        }
         public override bool[,] possibleMovements()
         {
             bool[,] m = new bool[board.qtLines, board.qtColumns];

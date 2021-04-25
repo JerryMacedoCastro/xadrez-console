@@ -215,7 +215,7 @@ namespace chess
 
         private void setTable()
         {
-           
+
 
             addNewPiece('a', 1, new Rook(board, Color.white));
             addNewPiece('b', 1, new Knight(board, Color.white));
@@ -225,7 +225,7 @@ namespace chess
             addNewPiece('f', 1, new Bishop(board, Color.white));
             addNewPiece('g', 1, new Knight(board, Color.white));
             addNewPiece('h', 1, new Rook(board, Color.white));
-            
+
             addNewPiece('a', 2, new Pawn(board, Color.white));
             addNewPiece('b', 2, new Pawn(board, Color.white));
             addNewPiece('c', 2, new Pawn(board, Color.white));

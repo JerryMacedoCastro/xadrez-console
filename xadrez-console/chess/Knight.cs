@@ -18,11 +18,6 @@ namespace chess
             return "C";
         }
 
-        public bool canMove(Position pos)
-        {
-            Piece p = board.getPiece(pos);
-            return p == null || p.color != color;
-        }
 
         public override bool[,] possibleMovements()
         {
@@ -36,21 +31,21 @@ namespace chess
                 m[pos.line, pos.column] = true;
             }
 
-           
+
             pos.defineValues(position.line - 2, position.column - 1);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-          
+
             pos.defineValues(position.line - 2, position.column + 1);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-           
+
             pos.defineValues(position.line - 1, position.column + 2);
             if (board.isValidPosition(pos) && canMove(pos))
             {
@@ -60,28 +55,28 @@ namespace chess
 
             //movimentos para baixo
 
-            
+
             pos.defineValues(position.line + 1, position.column + 2);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-           
+
             pos.defineValues(position.line + 2, position.column + 1);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-          
+
             pos.defineValues(position.line + 2, position.column - 1);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
             }
 
-            pos.defineValues(position.line + 1, position.column - 2 );
+            pos.defineValues(position.line + 1, position.column - 2);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;

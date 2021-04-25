@@ -35,6 +35,26 @@ namespace chess
             if (deadPiece != null)
                 deadPieces.Add(deadPiece);
 
+            //jogadas especiais roque pequeno
+            if(p is King && destiny.column == origin.column + 2)
+            {
+                Position rookOrigin = new Position(origin.line, origin.column + 3);
+                Position rookdestiny = new Position(origin.line, origin.column + 1);
+                Piece rook = board.removePiece(rookOrigin);
+                rook.increaseMovement();
+                board.addPiece(rook, rookdestiny);
+            }
+
+            //jogadas especiais roque grande
+            if (p is King && destiny.column == origin.column - 2)
+            {
+                Position rookOrigin = new Position(origin.line, origin.column - 4);
+                Position rookDestiny = new Position(origin.line, origin.column - 1);
+                Piece rook = board.removePiece(rookOrigin);
+                rook.increaseMovement();
+                board.addPiece(rook, rookDestiny);
+            }
+
             return deadPiece;
         }
 
@@ -48,6 +68,27 @@ namespace chess
                 deadPieces.Remove(deadPiece);
             }
             board.addPiece(p, origin);
+
+            //jogadas especiais roque pequeno
+            if (p is King && destiny.column == origin.column + 2)
+            {
+                Position rookOrigin = new Position(origin.line, origin.column + 3);
+                Position rookDestiny = new Position(origin.line, origin.column + 1);
+                Piece king = board.removePiece(rookDestiny);
+                king.decreaseMovement();
+                board.addPiece(king, rookOrigin);
+            }
+
+            //jogadas especiais roque grande
+            if (p is King && destiny.column == origin.column - 2)
+            {
+                Position rookOrigin = new Position(origin.line, origin.column - 4);
+                Position rookDestiny = new Position(origin.line, origin.column - 1);
+                Piece king = board.removePiece(rookDestiny);
+                king.decreaseMovement();
+                board.addPiece(king, rookOrigin);
+            }
+
 
         }
 
@@ -127,7 +168,7 @@ namespace chess
             return aux;
         }
 
-        private Color getChessMateColor(Color c)
+        private static Color getChessMateColor(Color c)
         {
             if (c == Color.black)
             {
@@ -218,10 +259,10 @@ namespace chess
 
 
             addNewPiece('a', 1, new Rook(board, Color.white));
-            addNewPiece('b', 1, new Knight(board, Color.white));
-            addNewPiece('c', 1, new Bishop(board, Color.white));
-            addNewPiece('d', 1, new Queen(board, Color.white));
-            addNewPiece('e', 1, new King(board, Color.white));
+          //  addNewPiece('b', 1, new Knight(board, Color.white));
+          //  addNewPiece('c', 1, new Bishop(board, Color.white));
+          //  addNewPiece('d', 1, new Queen(board, Color.white));
+            addNewPiece('e', 1, new King(board, Color.white, this));
             addNewPiece('f', 1, new Bishop(board, Color.white));
             addNewPiece('g', 1, new Knight(board, Color.white));
             addNewPiece('h', 1, new Rook(board, Color.white));
@@ -249,7 +290,7 @@ namespace chess
             addNewPiece('b', 8, new Knight(board, Color.black));
             addNewPiece('c', 8, new Bishop(board, Color.black));
             addNewPiece('d', 8, new Queen(board, Color.black));
-            addNewPiece('e', 8, new King(board, Color.black));
+            addNewPiece('e', 8, new King(board, Color.black, this));
             addNewPiece('f', 8, new Bishop(board, Color.black));
             addNewPiece('g', 8, new Knight(board, Color.black));
             addNewPiece('h', 8, new Rook(board, Color.black));

@@ -28,6 +28,10 @@ namespace xadrez_console
             Console.WriteLine();
             Console.WriteLine($"Turno: #{play.turn}");
             Console.WriteLine($"Jogador: #{play.actualPlayer}");
+            if(play.isCheck)
+            {
+                Console.WriteLine("Xeque");
+            }
             showDeadPieces(play);
         }
 

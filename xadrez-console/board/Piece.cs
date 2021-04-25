@@ -20,6 +20,11 @@
             qtMovements++;
         }
 
+        public void decreaseMovement()
+        {
+            qtMovements--;
+        }
+
         public bool hasPossibleMovements()
         {
             bool[,] m = possibleMovements();

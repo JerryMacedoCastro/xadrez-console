@@ -1,4 +1,5 @@
 ﻿using board;
+using System;
 using System.Collections.Generic;
 
 namespace chess
@@ -9,6 +10,7 @@ namespace chess
         public int turn { get; private set; }
         public Color actualPlayer { get; private set; }
         public bool hasFinish { get; private set; }
+        public bool isCheck { get; private set; }
         private HashSet<Piece> pieces;
         private HashSet<Piece> deadPieces;
 
@@ -18,12 +20,13 @@ namespace chess
             turn = 1;
             actualPlayer = Color.white;
             hasFinish = false;
+            isCheck = false;
             pieces = new HashSet<Piece>();
             deadPieces = new HashSet<Piece>();
             setTable();
         }
 
-        private void doMovement(Position origin, Position destiny)
+        private Piece doMovement(Position origin, Position destiny)
         {
             Piece p = board.removePiece(origin);
             p.increaseMovement();
@@ -31,14 +34,45 @@ namespace chess
             board.addPiece(p, destiny);
             if (deadPiece != null)
                 deadPieces.Add(deadPiece);
+
+            return deadPiece;
+        }
+
+        private void undoMovement(Position origin, Position destiny, Piece deadPiece)
+        {
+            Piece p = board.removePiece(destiny);
+            p.decreaseMovement();
+            if (deadPiece != null)
+            {
+                board.addPiece(deadPiece, destiny);
+                deadPieces.Remove(deadPiece);
+            }
+            board.addPiece(p, origin);
+
         }
 
         public void makeMove(Position origin, Position destiny)
         {
-            doMovement(origin, destiny);
+            Piece deadPiece = doMovement(origin, destiny);
+            if (isInCheck(actualPlayer))
+            {
+                undoMovement(origin, destiny, deadPiece);
+                throw new BoardException("You can not put yourself in check");
+            }
+
+            if (isInCheck(getChessMateColor(actualPlayer)))
+            {
+                isCheck = true;
+            }
+            else
+            {
+                isCheck = false;
+            }
             turn++;
             changePlayer();
         }
+
+
 
         public void validateOriginPosition(Position pos)
         {
@@ -86,6 +120,50 @@ namespace chess
             return aux;
         }
 
+        private Color getChessMateColor(Color c)
+        {
+            if (c == Color.black)
+            {
+                return Color.white;
+            }
+            else
+            {
+                return Color.black;
+            }
+        }
+
+        private Piece getKing(Color c)
+        {
+            foreach (Piece p in getLivePieces(c))
+            {
+                if (p is King)
+                {
+                    return p;
+
+                };
+            }
+            return null;
+
+        }
+
+        public bool isInCheck(Color c)
+        {
+            Piece k = getKing(c);
+            if (k == null)
+            {
+                throw new BoardException($"There is no king of color #{c}");
+            }
+
+            foreach (Piece p in getLivePieces(getChessMateColor(c)))
+            {
+                bool[,] m = p.possibleMovements();
+                if (m[k.position.line, k.position.column])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public void addNewPiece(char col, int line, Piece p)
         {

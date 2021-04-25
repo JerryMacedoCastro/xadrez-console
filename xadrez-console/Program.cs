@@ -16,9 +16,11 @@ namespace xadrez_console
 
                     try
                     {
+                    
+
                         Console.Clear();
                         Screen.showPlayInfo(play);
-
+                        
                         Console.WriteLine();
                         Console.WriteLine("origem: ");
                         Position origin = Screen.readPosition().toPosition();
@@ -36,6 +38,13 @@ namespace xadrez_console
                         play.validateDestinyPosition(origin, destiny);
 
                         play.makeMove(origin, destiny);
+
+                     
+                            
+                        
+                     
+                    
+                        
                     }
                     catch (BoardException e)
                     {

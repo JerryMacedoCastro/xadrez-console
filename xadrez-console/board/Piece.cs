@@ -25,6 +25,12 @@
             qtMovements--;
         }
 
+        public bool canMove(Position pos)
+        {
+            Piece p = board.getPiece(pos);
+            return p == null || p.color != color;
+        }
+
         public bool hasPossibleMovements()
         {
             bool[,] m = possibleMovements();
@@ -39,7 +45,7 @@
             return false;
         }
 
-        public bool canMoveTo(Position pos)
+        public bool possibleMovement(Position pos)
         {
             return possibleMovements()[pos.line, pos.column];
         }

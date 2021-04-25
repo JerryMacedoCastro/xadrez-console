@@ -68,8 +68,15 @@ namespace chess
             {
                 isCheck = false;
             }
-            turn++;
-            changePlayer();
+            if (isCheckmate(getChessMateColor(actualPlayer)))
+            {
+                hasFinish = true;
+            }
+            else
+            {
+                turn++;
+                changePlayer();
+            }
         }
 
 
@@ -149,10 +156,10 @@ namespace chess
         public bool isInCheck(Color c)
         {
             Piece k = getKing(c);
-            if (k == null)
+            /*if (k == null)
             {
                 throw new BoardException($"There is no king of color #{c}");
-            }
+            }*/
 
             foreach (Piece p in getLivePieces(getChessMateColor(c)))
             {
@@ -163,6 +170,33 @@ namespace chess
                 }
             }
             return false;
+        }
+
+        public bool isCheckmate(Color c)
+        {
+            if (!isInCheck(c))
+            {
+                return false;
+            }
+            foreach (Piece p in getLivePieces(c))
+            {
+                bool[,] m = p.possibleMovements();
+                for (int i = 0; i < board.qtLines; i++)
+                {
+                    for (int j = 0; j < board.qtColumns; j++)
+                    {
+                        Position origin = p.position;
+                        Piece deadPiece = doMovement(p.position, new Position(i, j));
+                        bool testCheck = isInCheck(c);
+                        undoMovement(origin, new Position(i, j), deadPiece);
+                        if (!testCheck)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         public void addNewPiece(char col, int line, Piece p)
@@ -180,10 +214,10 @@ namespace chess
             addNewPiece('e', 2, new Rook(board, Color.white));
             addNewPiece('d', 1, new King(board, Color.white));
 
-            addNewPiece('c', 7, new Rook(board, Color.black));
-            addNewPiece('c', 8, new Rook(board, Color.black));
-            addNewPiece('d', 7, new Rook(board, Color.black));
-            addNewPiece('e', 7, new Rook(board, Color.black));
+           // addNewPiece('c', 7, new Rook(board, Color.black));
+           // addNewPiece('c', 8, new Rook(board, Color.black));
+            //addNewPiece('d', 7, new Rook(board, Color.black));
+           // addNewPiece('e', 7, new Rook(board, Color.black));
             addNewPiece('e', 8, new Rook(board, Color.black));
             addNewPiece('d', 8, new King(board, Color.black));
         }

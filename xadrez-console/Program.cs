@@ -43,6 +43,8 @@ namespace xadrez_console
                         Console.ReadLine();
                     }
                 }
+                Console.Clear();
+                Screen.showPlayInfo(play);
 
 
             }

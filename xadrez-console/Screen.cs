@@ -27,12 +27,22 @@ namespace xadrez_console
             showBoard(play.board);
             Console.WriteLine();
             Console.WriteLine($"Turno: #{play.turn}");
-            Console.WriteLine($"Jogador: #{play.actualPlayer}");
-            if(play.isCheck)
+
+            if (!play.hasFinish)
             {
-                Console.WriteLine("Xeque");
+
+                Console.WriteLine($"Jogador: #{play.actualPlayer}");
+                if (play.isCheck)
+                {
+                    Console.WriteLine("Xeque");
+                }
+                showDeadPieces(play);
+            } else
+            {
+                Console.WriteLine("Xequemate");
+                Console.WriteLine($"O jogador vencedor foi o #{play.actualPlayer}");
+
             }
-            showDeadPieces(play);
         }
 
         public static void showDeadPieces(ChessPlay play)

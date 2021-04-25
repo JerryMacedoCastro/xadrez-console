@@ -17,10 +17,7 @@ namespace xadrez_console
                     try
                     {
                         Console.Clear();
-                        Screen.showBoard(play.board);
-                        Console.WriteLine();
-                        Console.WriteLine($"Turno: #{play.turn}");
-                        Console.WriteLine($"Jogador: #{play.actualPlayer}");
+                        Screen.showPlayInfo(play);
 
                         Console.WriteLine();
                         Console.WriteLine("origem: ");

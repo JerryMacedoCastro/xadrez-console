@@ -1,5 +1,5 @@
 ﻿using board;
-using System;
+using System.Collections.Generic;
 
 namespace chess
 {
@@ -9,6 +9,8 @@ namespace chess
         public int turn { get; private set; }
         public Color actualPlayer { get; private set; }
         public bool hasFinish { get; private set; }
+        private HashSet<Piece> pieces;
+        private HashSet<Piece> deadPieces;
 
         public ChessPlay()
         {
@@ -16,6 +18,8 @@ namespace chess
             turn = 1;
             actualPlayer = Color.white;
             hasFinish = false;
+            pieces = new HashSet<Piece>();
+            deadPieces = new HashSet<Piece>();
             setTable();
         }
 
@@ -25,6 +29,8 @@ namespace chess
             p.increaseMovement();
             Piece deadPiece = board.removePiece(destiny);
             board.addPiece(p, destiny);
+            if (deadPiece != null)
+                deadPieces.Add(deadPiece);
         }
 
         public void makeMove(Position origin, Position destiny)
@@ -57,21 +63,51 @@ namespace chess
             else
                 actualPlayer = Color.white;
         }
+
+        public HashSet<Piece> getDeadPieces(Color color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach (Piece p in deadPieces)
+            {
+                if (p.color == color)
+                    aux.Add(p);
+            }
+            return aux;
+        }
+        public HashSet<Piece> getLivePieces(Color color)
+        {
+            HashSet<Piece> aux = new HashSet<Piece>();
+            foreach (Piece p in pieces)
+            {
+                if (p.color == color)
+                    aux.Add(p);
+            }
+            aux.ExceptWith(deadPieces);
+            return aux;
+        }
+
+
+        public void addNewPiece(char col, int line, Piece p)
+        {
+            board.addPiece(p, new ChessPosition(col, line).toPosition());
+            pieces.Add(p);
+        }
+
         private void setTable()
         {
-            board.addPiece(new Rook(board, Color.white), new ChessPosition('c', 1).toPosition());
-            board.addPiece(new Rook(board, Color.white), new ChessPosition('c', 2).toPosition());
-            board.addPiece(new Rook(board, Color.white), new ChessPosition('d', 2).toPosition());
-            board.addPiece(new Rook(board, Color.white), new ChessPosition('e', 1).toPosition());
-            board.addPiece(new Rook(board, Color.white), new ChessPosition('e', 2).toPosition());
-            board.addPiece(new King(board, Color.white), new ChessPosition('d', 1).toPosition());
+            addNewPiece('c', 1, new Rook(board, Color.white));
+            addNewPiece('c', 2, new Rook(board, Color.white));
+            addNewPiece('d', 2, new Rook(board, Color.white));
+            addNewPiece('e', 1, new Rook(board, Color.white));
+            addNewPiece('e', 2, new Rook(board, Color.white));
+            addNewPiece('d', 1, new King(board, Color.white));
 
-            board.addPiece(new Rook(board, Color.black), new ChessPosition('c', 7).toPosition());
-            board.addPiece(new Rook(board, Color.black), new ChessPosition('c', 8).toPosition());
-            board.addPiece(new Rook(board, Color.black), new ChessPosition('d', 7).toPosition());
-            board.addPiece(new Rook(board, Color.black), new ChessPosition('e', 7).toPosition());
-            board.addPiece(new Rook(board, Color.black), new ChessPosition('e', 8).toPosition());
-            board.addPiece(new King(board, Color.black), new ChessPosition('d', 8).toPosition());
+            addNewPiece('c', 7, new Rook(board, Color.black));
+            addNewPiece('c', 8, new Rook(board, Color.black));
+            addNewPiece('d', 7, new Rook(board, Color.black));
+            addNewPiece('e', 7, new Rook(board, Color.black));
+            addNewPiece('e', 8, new Rook(board, Color.black));
+            addNewPiece('d', 8, new King(board, Color.black));
         }
     }
 }

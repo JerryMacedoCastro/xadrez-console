@@ -32,7 +32,7 @@ namespace chess
             }
 
             //superior direito
-            pos.defineValues(position.line + 1, position.column + 1);
+            pos.defineValues(position.line - 1, position.column + 1);
             if (board.isValidPosition(pos) && canMove(pos))
             {
                 m[pos.line, pos.column] = true;
@@ -72,8 +72,7 @@ namespace chess
             {
                 m[pos.line, pos.column] = true;
             }
-            return m;
-
+           
             //superior esquerdo
             pos.defineValues(position.line - 1, position.column - 1);
             if (board.isValidPosition(pos) && canMove(pos))

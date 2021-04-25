@@ -1,6 +1,7 @@
 ﻿using board;
 using chess;
 using System;
+using System.Collections.Generic;
 
 namespace xadrez_console
 {
@@ -20,6 +21,40 @@ namespace xadrez_console
             Console.WriteLine("  a b c d e f g h");
         }
 
+        internal static void showPlayInfo(ChessPlay play)
+        {
+            Console.WriteLine();
+            showBoard(play.board);
+            Console.WriteLine();
+            Console.WriteLine($"Turno: #{play.turn}");
+            Console.WriteLine($"Jogador: #{play.actualPlayer}");
+            showDeadPieces(play);
+        }
+
+        public static void showDeadPieces(ChessPlay play)
+        {
+            Console.WriteLine("Peças mortas: ");
+            Console.Write("Brancas: ");
+            showSet(play.getDeadPieces(Color.white));
+
+            ConsoleColor auxColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine();
+            Console.Write("Pretas: ");
+            showSet(play.getDeadPieces(Color.black));
+            Console.ForegroundColor = auxColor;
+        }
+
+        public static void showSet(HashSet<Piece> pieces)
+        {
+            Console.Write("[");
+            foreach (Piece p in pieces)
+            {
+                Console.Write(p + " ");
+            }
+            Console.Write("]");
+        }
+
         public static void showBoard(Board b, bool[,] m)
         {
             ConsoleColor originalColor = Console.BackgroundColor;
@@ -32,7 +67,8 @@ namespace xadrez_console
                     if (m[i, j] == true)
                     {
                         Console.BackgroundColor = newColor;
-                    } else
+                    }
+                    else
                     {
                         Console.BackgroundColor = originalColor;
                     }

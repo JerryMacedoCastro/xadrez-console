@@ -6,8 +6,8 @@ namespace chess
     class ChessPlay
     {
         public Board board { get; private set; }
-        private int turn;
-        private Color actualPlayer;
+        public int turn { get; private set; }
+        public Color actualPlayer { get; private set; }
         public bool hasFinish { get; private set; }
 
         public ChessPlay()
@@ -19,7 +19,7 @@ namespace chess
             setTable();
         }
 
-        public void doMovement(Position origin, Position destiny)
+        private void doMovement(Position origin, Position destiny)
         {
             Piece p = board.removePiece(origin);
             p.increaseMovement();
@@ -27,6 +27,36 @@ namespace chess
             board.addPiece(p, destiny);
         }
 
+        public void makeMove(Position origin, Position destiny)
+        {
+            doMovement(origin, destiny);
+            turn++;
+            changePlayer();
+        }
+
+        public void validateOriginPosition(Position pos)
+        {
+            if (board.getPiece(pos) == null)
+                throw new BoardException("Tehere is no piece on this position");
+            if (actualPlayer != board.getPiece(pos).color)
+                throw new BoardException("you can not move this piece");
+            if (!board.getPiece(pos).hasPossibleMovements())
+                throw new BoardException("This piece is blocked");
+        }
+
+        public void validateDestinyPosition(Position origin, Position destiny)
+        {
+            if (!board.getPiece(origin).canMoveTo(destiny))
+                throw new BoardException("Invalid destiny");
+        }
+
+        private void changePlayer()
+        {
+            if (actualPlayer == Color.white)
+                actualPlayer = Color.black;
+            else
+                actualPlayer = Color.white;
+        }
         private void setTable()
         {
             board.addPiece(new Rook(board, Color.white), new ChessPosition('c', 1).toPosition());

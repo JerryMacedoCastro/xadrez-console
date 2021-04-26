@@ -11,6 +11,8 @@ namespace chess
         public Color actualPlayer { get; private set; }
         public bool hasFinish { get; private set; }
         public bool isCheck { get; private set; }
+        public Piece canSufferEnPassant { get; private set; }
+
         private HashSet<Piece> pieces;
         private HashSet<Piece> deadPieces;
 
@@ -21,6 +23,7 @@ namespace chess
             actualPlayer = Color.white;
             hasFinish = false;
             isCheck = false;
+            canSufferEnPassant = null;
             pieces = new HashSet<Piece>();
             deadPieces = new HashSet<Piece>();
             setTable();
@@ -34,6 +37,48 @@ namespace chess
             board.addPiece(p, destiny);
             if (deadPiece != null)
                 deadPieces.Add(deadPiece);
+
+            //#jogadaespecial roque pequeno
+            if (p is King && destiny.column == origin.column + 2)
+            {
+                Position rookOrigin = new Position(origin.line, origin.column + 3);
+                Position rookdestiny = new Position(origin.line, origin.column + 1);
+                Piece rook = board.removePiece(rookOrigin);
+                rook.increaseMovement();
+                board.addPiece(rook, rookdestiny);
+            }
+
+            //#jogadaespecial roque grande
+            if (p is King && destiny.column == origin.column - 2)
+            {
+                Position rookOrigin = new Position(origin.line, origin.column - 4);
+                Position rookDestiny = new Position(origin.line, origin.column - 1);
+                Piece rook = board.removePiece(rookOrigin);
+                rook.increaseMovement();
+                board.addPiece(rook, rookDestiny);
+            }
+
+
+            //#jogadaespecial en passant
+            if (p is Pawn)
+            {
+                if(origin.column != destiny.column && deadPiece == null)
+                {
+                    Position pawnPos;
+                    if (p.color == Color.white)
+                    {
+                        pawnPos = new Position(destiny.line + 1, destiny.column);
+                    }
+                    else
+                    {
+                        pawnPos = new Position(destiny.line - 1, destiny.column);
+                    }
+                    deadPiece = board.removePiece(pawnPos);
+                    deadPieces.Add(deadPiece);
+                }
+            }
+             
+
 
             return deadPiece;
         }
@@ -49,6 +94,45 @@ namespace chess
             }
             board.addPiece(p, origin);
 
+            //#jogadaespecial roque pequeno
+            if (p is King && destiny.column == origin.column + 2)
+            {
+                Position rookOrigin = new Position(origin.line, origin.column + 3);
+                Position rookDestiny = new Position(origin.line, origin.column + 1);
+                Piece king = board.removePiece(rookDestiny);
+                king.decreaseMovement();
+                board.addPiece(king, rookOrigin);
+            }
+
+            //#jogadaespecial roque grande
+            if (p is King && destiny.column == origin.column - 2)
+            {
+                Position rookOrigin = new Position(origin.line, origin.column - 4);
+                Position rookDestiny = new Position(origin.line, origin.column - 1);
+                Piece king = board.removePiece(rookDestiny);
+                king.decreaseMovement();
+                board.addPiece(king, rookOrigin);
+            }
+
+            //#jogadaespecial en passant
+            if (p is Pawn)
+            {
+                if (origin.column != destiny.column && deadPiece == canSufferEnPassant)
+                {
+                    Piece pawn = board.removePiece(destiny);
+                    Position pawnPos; 
+                    if(p.color == Color.white)
+                    {
+                        pawnPos = new Position(3, p.position.column);
+                    } else
+                    {
+                        pawnPos = new Position(4, p.position.column);
+                    }
+                    board.addPiece(pawn, pawnPos);
+                } 
+            }
+
+
         }
 
         public void makeMove(Position origin, Position destiny)
@@ -59,6 +143,22 @@ namespace chess
                 undoMovement(origin, destiny, deadPiece);
                 throw new BoardException("You can not put yourself in check");
             }
+            
+            Piece p = board.getPiece(destiny);
+
+            // #jogada especial promocao
+            if (p is Pawn)
+            {
+                if ((p.color == Color.white && destiny.line == 0) || (p.color == Color.black && destiny.line == 7))
+                {
+                    p = board.removePiece(destiny);
+                    pieces.Remove(p);
+                    Piece queen = new Queen(board, p.color);
+                    board.addPiece(queen, destiny);
+                    pieces.Add(queen);
+                }
+            }
+
 
             if (isInCheck(getChessMateColor(actualPlayer)))
             {
@@ -77,9 +177,17 @@ namespace chess
                 turn++;
                 changePlayer();
             }
+
+            //# jogadaespecial  En Passant
+            if (p is Pawn && (destiny.line == origin.line -2 || destiny.line == origin.line + 2))
+            {
+                canSufferEnPassant = p; 
+            }
+            else
+            {
+                canSufferEnPassant = null;
+            }
         }
-
-
 
         public void validateOriginPosition(Position pos)
         {
@@ -115,6 +223,7 @@ namespace chess
             }
             return aux;
         }
+
         public HashSet<Piece> getLivePieces(Color color)
         {
             HashSet<Piece> aux = new HashSet<Piece>();
@@ -127,7 +236,7 @@ namespace chess
             return aux;
         }
 
-        private Color getChessMateColor(Color c)
+        private static Color getChessMateColor(Color c)
         {
             if (c == Color.black)
             {
@@ -173,7 +282,6 @@ namespace chess
             return false;
         }
 
-
         public bool isCheckmate(Color c)
         {
             if (!isInCheck(c))
@@ -205,8 +313,6 @@ namespace chess
             return true;
         }
 
-
-
         public void addNewPiece(char col, int line, Piece p)
         {
             board.addPiece(p, new ChessPosition(col, line).toPosition());
@@ -221,35 +327,35 @@ namespace chess
             addNewPiece('b', 1, new Knight(board, Color.white));
             addNewPiece('c', 1, new Bishop(board, Color.white));
             addNewPiece('d', 1, new Queen(board, Color.white));
-            addNewPiece('e', 1, new King(board, Color.white));
+            addNewPiece('e', 1, new King(board, Color.white, this));
             addNewPiece('f', 1, new Bishop(board, Color.white));
             addNewPiece('g', 1, new Knight(board, Color.white));
             addNewPiece('h', 1, new Rook(board, Color.white));
 
-            addNewPiece('a', 2, new Pawn(board, Color.white));
-            addNewPiece('b', 2, new Pawn(board, Color.white));
-            addNewPiece('c', 2, new Pawn(board, Color.white));
-            addNewPiece('d', 2, new Pawn(board, Color.white));
-            addNewPiece('e', 2, new Pawn(board, Color.white));
-            addNewPiece('f', 2, new Pawn(board, Color.white));
-            addNewPiece('g', 2, new Pawn(board, Color.white));
-            addNewPiece('h', 2, new Pawn(board, Color.white));
+            addNewPiece('a', 2, new Pawn(board, Color.white, this));
+            addNewPiece('b', 2, new Pawn(board, Color.white, this));
+            addNewPiece('c', 2, new Pawn(board, Color.white, this));
+            addNewPiece('d', 2, new Pawn(board, Color.white, this));
+            addNewPiece('e', 2, new Pawn(board, Color.white, this));
+            addNewPiece('f', 2, new Pawn(board, Color.white, this));
+            addNewPiece('g', 2, new Pawn(board, Color.white, this));
+            addNewPiece('h', 2, new Pawn(board, Color.white, this));
 
 
-            addNewPiece('a', 7, new Pawn(board, Color.black));
-            addNewPiece('b', 7, new Pawn(board, Color.black));
-            addNewPiece('c', 7, new Pawn(board, Color.black));
-            addNewPiece('d', 7, new Pawn(board, Color.black));
-            addNewPiece('e', 7, new Pawn(board, Color.black));
-            addNewPiece('f', 7, new Pawn(board, Color.black));
-            addNewPiece('g', 7, new Pawn(board, Color.black));
-            addNewPiece('h', 7, new Pawn(board, Color.black));
+            addNewPiece('a', 7, new Pawn(board, Color.black, this));
+            addNewPiece('b', 7, new Pawn(board, Color.black, this));
+            addNewPiece('c', 7, new Pawn(board, Color.black, this));
+            addNewPiece('d', 7, new Pawn(board, Color.black, this));
+            addNewPiece('e', 7, new Pawn(board, Color.black, this));
+            addNewPiece('f', 7, new Pawn(board, Color.black, this));
+            addNewPiece('g', 7, new Pawn(board, Color.black, this));
+            addNewPiece('h', 7, new Pawn(board, Color.black, this));
 
             addNewPiece('a', 8, new Rook(board, Color.black));
             addNewPiece('b', 8, new Knight(board, Color.black));
             addNewPiece('c', 8, new Bishop(board, Color.black));
             addNewPiece('d', 8, new Queen(board, Color.black));
-            addNewPiece('e', 8, new King(board, Color.black));
+            addNewPiece('e', 8, new King(board, Color.black, this));
             addNewPiece('f', 8, new Bishop(board, Color.black));
             addNewPiece('g', 8, new Knight(board, Color.black));
             addNewPiece('h', 8, new Rook(board, Color.black));

@@ -5,15 +5,21 @@ namespace chess
 {
     class King : Piece
     {
+        private ChessPlay play;
 
-
-        public King(Board b, Color color) : base(b, color)
+        public King(Board b, Color color, ChessPlay play) : base(b, color)
         {
-
+            this.play = play;
         }
         public override string ToString()
         {
             return "R";
+        }
+
+        private bool canRookCastling(Position pos)
+        {
+            Piece p = board.getPiece(pos);
+            return p != null && p is Rook && p.color == color && qtMovements == 0;
         }
 
         public override bool[,] possibleMovements()
@@ -77,6 +83,39 @@ namespace chess
             {
                 m[pos.line, pos.column] = true;
             }
+
+
+
+            //#jogadaespecial
+            if (qtMovements == 0 && !play.isCheck)
+            {
+                //roque pequeno
+                Position rookPositionKingside = new Position(position.line, position.column + 3);
+                if (canRookCastling(rookPositionKingside))
+                {
+                    Position p1 = new Position(position.line, position.column + 1);
+                    Position p2 = new Position(position.line, position.column + 2);
+                    if (board.getPiece(p1) == null && board.getPiece(p2) == null)
+                    {
+                        m[position.line, position.column + 2] = true;
+                    }
+                }
+
+                //roque grande 
+                Position rookPositionQueenside = new Position(position.line, position.column - 4);
+                if (canRookCastling(rookPositionQueenside))
+                {
+                    Position p1 = new Position(position.line, position.column - 1);
+                    Position p2 = new Position(position.line, position.column - 2);
+                    Position p3 = new Position(position.line, position.column - 3);
+                    if (board.getPiece(p1) == null && board.getPiece(p2) == null && board.getPiece(p3) == null)
+                    {
+                        m[position.line, position.column - 2] = true;
+                    }
+                }
+
+            }
+
             return m;
 
 

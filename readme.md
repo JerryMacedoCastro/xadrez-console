@@ -1,6 +1,6 @@
 # xadrez-console 
 ## Jogo de xadrez no console 
-**_Jerry Macedo Castro_** | jerry.castro96@outlook.com | <a href="linkedin.com/in/jerry-macedo-castro/">LinkedIn</a>
+**_Jerry Macedo Castro_** | jerry.castro96@outlook.com | <a href="https://www.linkedin.com/in/jerry-macedo-castro/">LinkedIn</a>
 
 ## Funcionamento
 - A aplicação permite que o usuario joque uma partida de xadrez completa. 

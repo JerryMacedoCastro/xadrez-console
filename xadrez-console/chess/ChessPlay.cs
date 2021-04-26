@@ -143,6 +143,22 @@ namespace chess
                 undoMovement(origin, destiny, deadPiece);
                 throw new BoardException("You can not put yourself in check");
             }
+            
+            Piece p = board.getPiece(destiny);
+
+            // #jogada especial promocao
+            if (p is Pawn)
+            {
+                if ((p.color == Color.white && destiny.line == 0) || (p.color == Color.black && destiny.line == 7))
+                {
+                    p = board.removePiece(destiny);
+                    pieces.Remove(p);
+                    Piece queen = new Queen(board, p.color);
+                    board.addPiece(queen, destiny);
+                    pieces.Add(queen);
+                }
+            }
+
 
             if (isInCheck(getChessMateColor(actualPlayer)))
             {
@@ -162,7 +178,6 @@ namespace chess
                 changePlayer();
             }
 
-            Piece p = board.getPiece(destiny);
             //# jogadaespecial  En Passant
             if (p is Pawn && (destiny.line == origin.line -2 || destiny.line == origin.line + 2))
             {

@@ -86,7 +86,7 @@ namespace chess
 
 
 
-            //jogadas especiais 
+            //#jogadaespecial
             if (qtMovements == 0 && !play.isCheck)
             {
                 //roque pequeno

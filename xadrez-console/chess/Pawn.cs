@@ -4,8 +4,10 @@ namespace chess
 {
     class Pawn : Piece
     {
-        public Pawn(Board board, Color color) : base(board, color)
+        private ChessPlay play;
+        public Pawn(Board board, Color color, ChessPlay play) : base(board, color)
         {
+            this.play = play;
         }
 
         public override string ToString()
@@ -55,6 +57,24 @@ namespace chess
                 {
                     m[pos.line, pos.column] = true;
                 }
+
+                //#jogadaespecial en passant
+                if (position.line == 3)
+                {
+                    Position leftPos = new Position(position.line, position.column - 1);
+                    if (board.isValidPosition(leftPos) && hasEnemy(leftPos) && board.getPiece(leftPos) == play.canSufferEnPassant)
+                    {
+                        m[leftPos.line - 1, leftPos.column] = true;
+                    }
+
+                    Position rightPos = new Position(position.line, position.column + 1);
+                    if (board.isValidPosition(rightPos) && hasEnemy(rightPos) && board.getPiece(rightPos) == play.canSufferEnPassant)
+                    {
+                        m[rightPos.line -1, rightPos.column] = true;
+                    }
+
+                }
+
             }
             else
             {
@@ -80,6 +100,24 @@ namespace chess
                 if (board.isValidPosition(pos) && hasEnemy(pos))
                 {
                     m[pos.line, pos.column] = true;
+                }
+
+
+                //#jogadaespecial en passant
+                if (position.line == 4)
+                {
+                    Position leftPos = new Position(position.line, position.column - 1);
+                    if (board.isValidPosition(leftPos) && hasEnemy(leftPos) && board.getPiece(leftPos) == play.canSufferEnPassant)
+                    {
+                        m[leftPos.line + 1, leftPos.column] = true;
+                    }
+
+                    Position rightPos = new Position(position.line, position.column + 1);
+                    if (board.isValidPosition(rightPos) && hasEnemy(rightPos) && board.getPiece(rightPos) == play.canSufferEnPassant)
+                    {
+                        m[rightPos.line +  1, rightPos.column] = true;
+                    }
+
                 }
             }
 
